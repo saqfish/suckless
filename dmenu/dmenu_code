@@ -1,5 +1,5 @@
 #!/bin/sh
 defaultfont="monospace:size=10"
 font=${2:-defaultfont}
-dir=$(find "$HOME/$1" -maxdepth 1 -type d | dmenu -l 10)
+dir=$(find "$HOME/$1" -maxdepth 1 -type d | dmenu -l 10 -bw 3 -nf green -sf green -fn $font)
 cd $dir && st -f $font -e 'vim'
