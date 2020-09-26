@@ -1,7 +1,9 @@
 dwm/dwm
 dmenu/dmenu
+dmenu/stest
 slstatus/slstatus
 st/st
 
 *.orig
 *.rej
+*.o
