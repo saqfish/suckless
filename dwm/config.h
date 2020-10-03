@@ -5,20 +5,22 @@ static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=18" };
-static const char dmenufont[]       = "monospace:size=18";
-static const char editorfont[]      = "monospace:size=18";
-static const char termfont[]        = "monospace:size=18";
-static const char col_normbg[]       = "#3F0010";
-static const char col_normfg[]       = "#dbcbbd";
-static const char col_normbd[]       = "#dbcbbd";
-static const char col_selbg[]       = "#f8efd4";
-static const char col_selfg[]       = "#3F0010";
-static const char col_selbd[]       = "#f8efd4";
+static const char *fonts[]          = {"mono:size=18"};
+static const char dmenufont[]       = "mono:size=18";
+static const char editorfont[]      = "mono:size=18";
+static const char termfont[]        = "mono:size=18";
+static const char col_normbg[]      = "#111111";
+static const char col_normfg[]      = "#FFFFFF";
+static const char col_normbd[]      = "#555555";
+static const char col_selbg[]       = "#999999";
+static const char col_selfg[]       = "#111111";
+static const char col_selbd[]       = "#999999";
+static const char col_black[]       = "#000000";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_normfg, col_normbg, col_normbd},
 	[SchemeSel] = { col_selfg, col_selbg, col_selbd},
+	[SchemeStat] = { col_normfg, col_black, col_normbd},
 };
 
 typedef struct {
@@ -50,9 +52,9 @@ static const int resizehints = 1;    /* 1 means respect size hints in tiled resi
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },    /* first entry is default */
-	{ "><>",      NULL },    /* no layout function means floating behavior */
-	{ "[M]",      monocle },
+	{ "T",      tile },    /* first entry is default */
+	{ "X",      NULL },    /* no layout function means floating behavior */
+	{ "M",      monocle },
 };
 
 /* key definitions */
@@ -97,9 +99,9 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
-	{ MODKEY,            			XK_y,  	   togglescratch,  {.ui = 0 } },
-	{ MODKEY,            			XK_u,	   togglescratch,  {.ui = 1 } },
-	{ MODKEY,            			XK_x,	   togglescratch,  {.ui = 2 } },
+	{ MODKEY,            		XK_y,  	   togglescratch,  {.ui = 0 } },
+	{ MODKEY,            		XK_u,	   togglescratch,  {.ui = 1 } },
+	{ MODKEY,            		XK_x,	   togglescratch,  {.ui = 2 } },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
