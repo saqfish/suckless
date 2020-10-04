@@ -15,12 +15,16 @@ static const char col_normbd[]      = "#555555";
 static const char col_selbg[]       = "#999999";
 static const char col_selfg[]       = "#111111";
 static const char col_selbd[]       = "#999999";
-static const char col_black[]       = "#000000";
+
+static const char stat_bg[]       = "#000000";
+static const char stat_fg[]       = "#00ff00";
+static const char stat_bd[]       = "#999999";
+
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_normfg, col_normbg, col_normbd},
 	[SchemeSel] = { col_selfg, col_selbg, col_selbd},
-	[SchemeStat] = { col_normfg, col_black, col_normbd},
+	[SchemeStat] = { stat_fg, stat_bg, stat_bd},
 };
 
 typedef struct {
@@ -125,9 +129,6 @@ static Button buttons[] = {
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
-	{ ClkTagBar,            0,              Button1,        view,           {0} },
-	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
-	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
-	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
+	{ ClkTagBar,            0,         	Button1,        view,  		{0} },
 };
 
