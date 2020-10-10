@@ -62,7 +62,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeStat }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeStat0, SchemeStat1, SchemeStat2}; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -305,10 +305,8 @@ applyrules(Client *c)
 			c->isfloating = r->isfloating;
 			c->tags |= r->tags;
 			if ((r->tags & SPTAGMASK) && r->isfloating) {
-				c->w = sw-2;
-				c->h = sh-4;
-				c->x = 2;
-				c->y = 2;
+				c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
+				c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
 			}
 
 			for (m = mons; m && m->num != r->monitor; m = m->next);
@@ -718,12 +716,18 @@ drawbar(Monitor *m)
 	int boxw = drw->fonts->h / 6 + 2;
 	unsigned int i, occ = 0, urg = 0;
 	Client *c;
+	int clr;
+	char *sstext;
+
+	clr = stext[0] - '0';
+	sstext = stext+1;
 
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
-		drw_setscheme(drw, scheme[SchemeStat]);
-		tw = TEXTW(stext) - lrpad + 2; /* 2px right padding */
-		drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
+		const int sbc[] = {SchemeStat0, SchemeStat1, SchemeStat2};
+		drw_setscheme(drw, scheme[sbc[clr]]);
+		tw = TEXTW(sstext) - lrpad + 2; /* 2px right padding */
+		drw_text(drw, m->ww - tw, 0, tw, bh, 0, sstext, 0);
 	}
 
 	for (c = m->clients; c; c = c->next) {
@@ -1639,10 +1643,8 @@ showhide(Client *c)
 		return;
 	if (ISVISIBLE(c)) {
 		if ((c->tags & SPTAGMASK) && c->isfloating) {
-			c->w = sw-2;
-			c->h = sh-4;
-			c->x = 2;
-			c->y = 2;
+			c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
+			c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
 		}
 		/* show clients top down */
 		XMoveWindow(dpy, c->win, c->x, c->y);
