@@ -29,7 +29,7 @@
 	const char *
 	battery_perc(const char *bat)
 	{
-		int perc;
+		int perc, n = 0;
 		char path[PATH_MAX];
 
 		if (esnprintf(path, sizeof(path),
@@ -39,8 +39,11 @@
 		if (pscanf(path, "%d", &perc) != 1) {
 			return NULL;
 		}
+		if (perc <= 30) n = 0;
+		else if (perc <= 70) n = 1;
+		else if (perc <= 100) n = 2;
 
-		return bprintf("%d", perc);
+		return bprintf("%d %d", n, perc);
 	}
 
 	const char *
