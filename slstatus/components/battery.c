@@ -43,7 +43,7 @@
 		else if (perc <= 70) n = 1;
 		else if (perc <= 100) n = 2;
 
-		return bprintf("%d %d", n, perc);
+		return bprintf("%d%d", n, perc);
 	}
 
 	const char *

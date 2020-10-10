@@ -62,7 +62,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeStat0, SchemeStat1, SchemeStat2}; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeStat0, SchemeStat1, SchemeStat2, SchemeStat3}; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -711,24 +711,35 @@ dirtomon(int dir)
 void
 drawbar(Monitor *m)
 {
-	int x, w, tw = 0;
+	int x, w, pos = 0;
 	int boxs = drw->fonts->h / 9;
 	int boxw = drw->fonts->h / 6 + 2;
 	unsigned int i, occ = 0, urg = 0;
 	Client *c;
-	int clr;
-	char *sstext;
+	char *tok, *sptr;
 
-	clr = stext[0] - '0';
-	sstext = stext+1;
+	const int sbc[] = {SchemeStat0, SchemeStat1, SchemeStat2, SchemeStat3};
 
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
-		const int sbc[] = {SchemeStat0, SchemeStat1, SchemeStat2};
-		drw_setscheme(drw, scheme[sbc[clr]]);
-		tw = TEXTW(sstext) - lrpad + 2; /* 2px right padding */
-		drw_text(drw, m->ww - tw, 0, tw, bh, 0, sstext, 0);
+		tok = strtok_r(stext, ",", &sptr);
+		while(tok != NULL){
+			int clr = 0, tw = 0;
+			char *txt = tok+1;
+
+			tw = TEXTW(txt)-lrpad;
+			pos += tw;
+			
+			clr = tok[0] - '0';
+
+			drw_setscheme(drw, scheme[sbc[clr > 0? clr+1 : 0]]);
+			drw_text(drw, m->ww - pos, 0, tw, bh, 0, txt, 0);
+
+			tok = strtok_r(NULL, ",", &sptr);
+
+		}
 	}
+
 
 	for (c = m->clients; c; c = c->next) {
 		occ |= c->tags == 255 ? 0 : c->tags;
@@ -754,14 +765,14 @@ drawbar(Monitor *m)
 	}
 
 
-	if ((w = m->ww - tw - x) > bh) {
-		drw_setscheme(drw, scheme[SchemeNorm]);
+	if ((w = m->ww - pos - x) > bh) {
+		drw_setscheme(drw, scheme[SchemeStat0]);
 		if (m->sel) {
-			drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0);
+			drw_text(drw, x, 0, m->ww-(m->ww/3), bh, lrpad / 2, m->sel->name, 0);
 			if (m->sel->isfloating)
 				drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
 		} else {
-			drw_rect(drw, x, 0, w, bh, 1, 1);
+			drw_rect(drw, x, 0, m->ww-(m->ww/3), bh, 1, 1);
 		}
 	}
 
