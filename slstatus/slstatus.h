@@ -1,5 +1,8 @@
 /* See LICENSE file for copyright and license details. */
 
+/* string */
+const char *string(const char *);
+
 /* battery */
 const char *battery_perc(const char *);
 const char *battery_state(const char *);

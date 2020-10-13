@@ -23,6 +23,7 @@
 	const char *
 	cpu_perc(void)
 	{
+		int perc = 0, n = 0;
 		static long double a[7];
 		long double b[7], sum;
 
@@ -43,10 +44,15 @@
 		if (sum == 0) {
 			return NULL;
 		}
+		perc =  (int)(100 *
+				((b[0] + b[1] + b[2] + b[5] + b[6]) -
+				 (a[0] + a[1] + a[2] + a[5] + a[6])) / sum);
 
-		return bprintf("%d", (int)(100 *
-		               ((b[0] + b[1] + b[2] + b[5] + b[6]) -
-		                (a[0] + a[1] + a[2] + a[5] + a[6])) / sum));
+		if (perc <= 30) n = 3;
+		else if (perc <= 70) n = 2;
+		else if (perc <= 100) n = 1;
+	
+		return bprintf("%d%3d", n, perc);
 	}
 #elif defined(__OpenBSD__)
 	#include <sys/param.h>

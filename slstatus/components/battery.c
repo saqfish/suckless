@@ -39,11 +39,11 @@
 		if (pscanf(path, "%d", &perc) != 1) {
 			return NULL;
 		}
-		if (perc <= 30) n = 0;
-		else if (perc <= 70) n = 1;
-		else if (perc <= 100) n = 2;
+		if (perc <= 30) n = 1;
+		else if (perc <= 70) n = 2;
+		else if (perc <= 100) n = 3;
 
-		return bprintf("%d%d", n, perc);
+		return bprintf("%d%3d", n, perc);
 	}
 
 	const char *

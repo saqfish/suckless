@@ -26,6 +26,7 @@
 	ram_perc(void)
 	{
 		uintmax_t total, free, buffers, cached;
+		int perc, n = 0;
 
 		if (pscanf("/proc/meminfo",
 		           "MemTotal: %ju kB\n"
@@ -40,9 +41,13 @@
 		if (total == 0) {
 			return NULL;
 		}
+		perc = 100 * ((total - free) - (buffers + cached)) / total;
 
-		return bprintf("%d", 100 * ((total - free) - (buffers + cached))
-                               / total);
+		if (perc <= 40) n = 3;
+		else if (perc <= 80) n = 2;
+		else if (perc <= 100) n = 1;
+
+		return bprintf("%d%3d", n, perc);
 	}
 
 	const char *
