@@ -62,7 +62,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeStat0, SchemeStat1, SchemeStat2, SchemeStat3}; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeReg, SchemeRed, SchemeYellow, SchemeGreen}; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -718,7 +718,7 @@ drawbar(Monitor *m)
 	Client *c;
 	char *tok, *sptr;
 
-	const int sbc[] = {SchemeStat0, SchemeStat1, SchemeStat2, SchemeStat3};
+	const int sbc[] = {SchemeReg, SchemeRed, SchemeYellow, SchemeGreen};
 
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
@@ -732,7 +732,7 @@ drawbar(Monitor *m)
 			
 			clr = tok[0] - '0';
 
-			drw_setscheme(drw, scheme[sbc[clr > 0? clr+1 : 0]]);
+			drw_setscheme(drw, scheme[sbc[clr]]);
 			drw_text(drw, m->ww - pos, 0, tw, bh, 0, txt, 0);
 
 			tok = strtok_r(NULL, ",", &sptr);
@@ -766,7 +766,7 @@ drawbar(Monitor *m)
 
 
 	if ((w = m->ww - pos - x) > bh) {
-		drw_setscheme(drw, scheme[SchemeStat0]);
+		drw_setscheme(drw, scheme[SchemeReg]);
 		if (m->sel) {
 			drw_text(drw, x, 0, m->ww-(m->ww/3), bh, lrpad / 2, m->sel->name, 0);
 			if (m->sel->isfloating)
@@ -1582,7 +1582,7 @@ setup(void)
 	if (!drw_fontset_create(drw, fonts, LENGTH(fonts)))
 		die("no fonts could be loaded.");
 	lrpad = drw->fonts->h;
-	bh = drw->fonts->h + 2;
+	bh = drw->fonts->h + barhpad;
 	updategeom();
 	/* init atoms */
 	utf8string = XInternAtom(dpy, "UTF8_STRING", False);
