@@ -4,6 +4,8 @@ dmenu/stest
 slstatus/slstatus
 st/st
 
+*.swp
+*.swo
 *.diff
 *.orig
 *.rej
