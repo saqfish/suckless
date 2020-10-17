@@ -623,7 +623,7 @@ setup(void)
 	utf8 = XInternAtom(dpy, "UTF8_STRING", False);
 
 	/* calculate menu geometry */
-	bh = drw->fonts->h + 2;
+	bh = drw->fonts->h + 5;
 	lines = MAX(lines, 0);
 	mh = (lines + 1) * bh;
 	promptw = (prompt && *prompt) ? TEXTW(prompt) - lrpad / 4 : 0;
