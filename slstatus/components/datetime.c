@@ -5,12 +5,12 @@
 #include "../util.h"
 
 const char *
-datetime(const char *fmt)
+datetime()
 {
 	time_t t;
 
 	t = time(NULL);
-	if (!strftime(buf, sizeof(buf), fmt, localtime(&t))) {
+	if (!strftime(buf, sizeof(buf), "0%I:%M %p", localtime(&t))) {
 		warn("strftime: Result string exceeds buffer size");
 		return NULL;
 	}

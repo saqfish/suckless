@@ -727,13 +727,13 @@ drawbar(Monitor *m)
 			int clr = 0, tw = 0;
 			char *txt = tok+1;
 
-			tw = TEXTW(txt)-lrpad;
-			pos += tw;
+			tw = TEXTW(txt)-lrpad+6;
+			pos += tw + 8;
 			
 			clr = tok[0] - '0';
 
 			drw_setscheme(drw, scheme[sbc[clr]]);
-			drw_text(drw, m->ww - pos, 0, tw, bh, 0, txt, 0);
+			drw_text(drw, m->ww - pos, 10, tw, bh-10, 3, txt, 0);
 
 			tok = strtok_r(NULL, ",", &sptr);
 
@@ -746,11 +746,13 @@ drawbar(Monitor *m)
 		if (c->isurgent)
 			urg |= c->tags;
 	}
-	x = 0;
+	x = lrpad;
 	
 	w = blw = TEXTW(m->ltsymbol);
+	drw_setscheme(drw, scheme[SchemeRed]);
+	drw_text(drw, x-2, 6, w+2, bh, 0, " ", 0);
 	drw_setscheme(drw, scheme[SchemeNorm]);
-	drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
+	drw_text(drw, x, 8, w, bh-10, lrpad / 2, m->ltsymbol, 0);
 	x += w;
 
 	for (i = 0; i < LENGTH(tags); i++) {
@@ -759,22 +761,15 @@ drawbar(Monitor *m)
 			continue;
 
 		w = TEXTW(tags[i]);
+
+		drw_setscheme(drw, scheme[SchemeRed]);
+		drw_text(drw, x-2, 6, w+4, bh, 0, " ", 0);
+
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
+		drw_text(drw, x, 8, w, bh-10, lrpad / 2, tags[i], urg & 1 << i);
 		x += w;
 	}
 
-
-	if ((w = m->ww - pos - x) > bh) {
-		drw_setscheme(drw, scheme[SchemeReg]);
-		if (m->sel) {
-			drw_text(drw, x, 0, m->ww-(m->ww/3), bh, lrpad / 2, m->sel->name, 0);
-			if (m->sel->isfloating)
-				drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
-		} else {
-			drw_rect(drw, x, 0, m->ww-(m->ww/3), bh, 1, 1);
-		}
-	}
 
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
