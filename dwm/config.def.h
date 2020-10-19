@@ -1,49 +1,56 @@
 /* See LICENSE file for copyright and license details. */
 
 
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
-static const unsigned int snap      = 32;       /* snap pixel */
+static const unsigned int borderpx  = 4;        /* border pixel of windows */
+static const unsigned int snap      = 16;       /* snap pixel */
+static const unsigned int barhpad  = 16;        /* bar height padding */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = {"mono8size=12"};
+static const char *fonts[]          = {"mono:size=12"};
 static const char dmenufont[]       = "mono:size=18";
-static const char editorfont[]      = "mono:size=18";
 static const char termfont[]        = "mono:size=18";
-static const char col_normbg[]      = "#111111";
+
+static const char col_normbg[]      = "#0a1016";
 static const char col_normfg[]      = "#FFFFFF";
-static const char col_normbd[]      = "#555555";
-static const char col_selbg[]       = "#999999";
-static const char col_selfg[]       = "#111111";
-static const char col_selbd[]       = "#999999";
-static const char stat_bg[]         = "#000000";
-static const char stat_bd[]         = "#999999";
+static const char col_normbd[]      = "#0a1016";
+static const char col_selbg[]       = "#29333c";
+static const char col_selfg[]       = "#FFFFFF";
+static const char col_selbd[]       = "#29333c";
+
+
+static const char stat_bg[]         = "#0a1016";
+static const char stat_bd[]         = "#000000";
 
 static const char stat_fg0[]       = "#FFFFFF";
 static const char stat_fg1[]       = "#ff0000";
 static const char stat_fg2[]       = "#FFFF00";
 static const char stat_fg3[]       = "#00ff00";
 
+static const char bar_bg[]         = "#0a1016";
+static const char bar_fg[]         = "#000000";
+static const char bar_bd[]         = "#000000";
 
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
+	[SchemeBar] = { bar_fg, bar_bg, bar_bd},
 	[SchemeNorm] = { col_normfg, col_normbg, col_normbd},
 	[SchemeSel] = { col_selfg, col_selbg, col_selbd},
-	[SchemeStat0] = { stat_fg0, stat_bg, stat_bd},
-	[SchemeStat1] = { stat_fg1, stat_bg, stat_bd},
-	[SchemeStat2] = { stat_fg2, stat_bg, stat_bd},
-	[SchemeStat3] = { stat_fg3, stat_bg, stat_bd},
+	[SchemeReg] = { stat_fg0, stat_bg, stat_bd},
+	[SchemeRed] = { stat_fg1, stat_bg, stat_bd},
+	[SchemeYellow] = { stat_fg2, stat_bg, stat_bd},
+	[SchemeGreen] = { stat_fg3, stat_bg, stat_bd},
 };
+
+
 
 typedef struct {
 	const char *name;
 	const void *cmd;
 } Sp;
 static const char *stermcmd[]  = { "st", "-n", "sterm", "-f", termfont, NULL };
-static const char *sbrwsr[]  = { "qutebrowser", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"sterm",      stermcmd},
-	{"sbrwsr",      sbrwsr},
 };
 
 /* tagging */
@@ -62,7 +69,7 @@ static const Rule rules[] = {
 /* layout(s) */
 static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
-static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
@@ -85,14 +92,12 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_normbg, "-nf", col_normfg, "-sb", col_selbg, "-sf", col_selfg, NULL };
-static const char *termcmd[]  = { "st", "-f", termfont,"-e", "tmux", NULL };
-static const char *editorcmd[]  = { "st", "-f", editorfont, "-e", "vim", NULL };
+static const char *termcmd[]  = { "st", "-f", termfont, NULL };
 
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY,             		XK_v,      spawn,          {.v = editorcmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -105,7 +110,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
