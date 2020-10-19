@@ -246,6 +246,7 @@ static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
 static int bh, blw = 0;      /* bar geometry */
 static int lrpad;            /* sum of left and right padding for text */
+static int thick = 2;        /* padding thickness */
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static unsigned int numlockmask = 0;
 static void (*handler[LASTEvent]) (XEvent *) = {
@@ -445,7 +446,6 @@ buttonpress(XEvent *e)
 		for (c = m->clients; c; c = c->next)
 			occ |= c->tags == 255 ? 0 : c->tags;
 		do {
-			/* do not reserve space for vacant tags */
 			if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
 				continue;
 			x += TEXTW(tags[i]);
@@ -713,7 +713,6 @@ drawbar(Monitor *m)
 {
 	int x, w, pos = 0;
 	int ispace = 10;
-	int thick = 2;
 	int btm = bh - (thick*2);
 	unsigned int i, occ = 0, urg = 0;
 	Client *c;
@@ -754,15 +753,10 @@ drawbar(Monitor *m)
 	}
 	x = thick;
 	
-	w = blw = TEXTW(m->ltsymbol)-lrpad + ispace;
-
-	drw_setscheme(drw, scheme[SchemeSel]);
-	drw_rect(drw, x-thick, 0, w+(thick*2), bh, 1, 1);
+	w = blw = TEXTW(m->ltsymbol);
 
 	drw_setscheme(drw, scheme[SchemeNorm]);
-	drw_text(drw, x, thick, w, btm, thick*2, m->ltsymbol, 0);
-
-	w += thick;
+	drw_text(drw, x, thick, w, btm, lrpad/2, m->ltsymbol, 0);
 
 	x += w;
 
@@ -771,16 +765,12 @@ drawbar(Monitor *m)
 		if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
 			continue;
 
-		w = TEXTW(tags[i])-lrpad+ispace;
-
-		drw_setscheme(drw, scheme[SchemeSel]);
-		drw_rect(drw, x-thick, 0, w+(thick*2), bh, 1, 1);
+		w = TEXTW(tags[i]);
 
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
-		drw_text(drw, x, thick, w, btm, thick*2, tags[i], urg & 1 << i);
+		drw_text(drw, x, thick, w, btm, lrpad/2, tags[i], urg & 1 << i);
 		x += w;
 	}
-
 
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
