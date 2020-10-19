@@ -62,7 +62,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeReg, SchemeRed, SchemeYellow, SchemeGreen}; /* color schemes */
+enum { SchemeBar, SchemeNorm, SchemeSel, SchemeReg, SchemeRed, SchemeYellow, SchemeGreen}; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -712,53 +712,55 @@ void
 drawbar(Monitor *m)
 {
 	int x, w, pos = 0;
-	int boxs = drw->fonts->h / 9;
-	int boxw = drw->fonts->h / 6 + 2;
-	// int th = drw->fonts->h;
 	int ispace = 10;
-	int top = 8;
-	int btm = bh-ispace;
 	int thick = 2;
+	int btm = bh - (thick*2);
 	unsigned int i, occ = 0, urg = 0;
 	Client *c;
 	char *tok, *sptr;
+       	char stxt[257];
+
+	strcpy(stxt,stext);
+
+	drw_setscheme(drw, scheme[SchemeBar]);
+	drw_rect(drw, 0, 0, m->ww, bh, 1, 1);
 
 	const int sbc[] = {SchemeReg, SchemeRed, SchemeYellow, SchemeGreen};
 
 	/* draw status first so it can be overdrawn by tags later */
 	if (m == selmon) { /* status is only drawn on selected monitor */
-		tok = strtok_r(stext, ",", &sptr);
+		tok = strtok_r(stxt, ",", &sptr);
 		while(tok != NULL){
 			int clr = 0, tw = 0;
 			char *txt = tok+1;
 
 			tw = TEXTW(txt)-ispace;
-			pos += tw + ispace;
+			pos += tw + thick;
 			
 			clr = tok[0] - '0';
 
 			drw_setscheme(drw, scheme[sbc[clr]]);
-			drw_rect(drw, m->ww - pos-thick, top-thick, tw+(thick*2), bh, 1, 0);
-			drw_text(drw, m->ww - pos, top, tw, btm, thick*2, txt, 0);
+			drw_text(drw, m->ww - pos, thick, tw, btm, thick*2, txt, 0);
 
 			tok = strtok_r(NULL, ",", &sptr);
 
 		}
 	}
 
-
 	for (c = m->clients; c; c = c->next) {
 		occ |= c->tags == 255 ? 0 : c->tags;
 		if (c->isurgent)
 			urg |= c->tags;
 	}
-	x = ispace;
+	x = thick;
 	
 	w = blw = TEXTW(m->ltsymbol)-lrpad + ispace;
 
+	drw_setscheme(drw, scheme[SchemeSel]);
+	drw_rect(drw, x-thick, 0, w+(thick*2), bh, 1, 1);
+
 	drw_setscheme(drw, scheme[SchemeNorm]);
-	drw_rect(drw, x-thick, top-thick, w+(thick*2), bh, 1, 0);
-	drw_text(drw, x, top, w, btm, thick*2, m->ltsymbol, 0);
+	drw_text(drw, x, thick, w, btm, thick*2, m->ltsymbol, 0);
 
 	w += thick;
 
@@ -771,17 +773,14 @@ drawbar(Monitor *m)
 
 		w = TEXTW(tags[i])-lrpad+ispace;
 
-		drw_rect(drw, x-thick, top-thick, w+(thick*2), bh, 1, 0);
+		drw_setscheme(drw, scheme[SchemeSel]);
+		drw_rect(drw, x-thick, 0, w+(thick*2), bh, 1, 1);
 
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
-		drw_text(drw, x, top, w, btm, thick*2, tags[i], urg & 1 << i);
+		drw_text(drw, x, thick, w, btm, thick*2, tags[i], urg & 1 << i);
 		x += w;
 	}
 
-	if ((w = m->ww - pos - x) > bh) {
-		drw_setscheme(drw, scheme[SchemeReg]);
-		drw_rect(drw, x+thick, top-thick, m->ww-x-pos-(thick*2), bh, 1, 1);
-	}
 
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
