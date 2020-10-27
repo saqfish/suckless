@@ -127,6 +127,7 @@ struct Monitor {
 	unsigned int tagset[2];
 	int showbar;
 	int topbar;
+	int toggle;
 	Client *clients;
 	Client *sel;
 	Client *stack;
@@ -246,7 +247,7 @@ static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
 static int bh, blw = 0;      /* bar geometry */
 static int lrpad;            /* sum of left and right padding for text */
-static int thick = 2;        /* padding thickness */
+static int thick = 1;        /* padding thickness */
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static unsigned int numlockmask = 0;
 static void (*handler[LASTEvent]) (XEvent *) = {
@@ -713,7 +714,7 @@ drawbar(Monitor *m)
 {
 	int x, w, pos = 0;
 	int ispace = 10;
-	int btm = bh - (thick*2);
+	int btm = (bh/2) - (thick*2);
 	unsigned int i, occ = 0, urg = 0;
 	Client *c;
 	char *tok, *sptr;
@@ -722,7 +723,7 @@ drawbar(Monitor *m)
 	strcpy(stxt,stext);
 
 	drw_setscheme(drw, scheme[SchemeBar]);
-	drw_rect(drw, 0, 0, m->ww, bh, 1, 1);
+	drw_rect(drw, 0, 0, m->ww, bh, 1, 0);
 
 	const int sbc[] = {SchemeReg, SchemeRed, SchemeYellow, SchemeGreen};
 
@@ -771,6 +772,10 @@ drawbar(Monitor *m)
 		drw_text(drw, x, thick, w, btm, lrpad/2, tags[i], urg & 1 << i);
 		x += w;
 	}
+
+	w = TEXTW(m->sel->name);
+	drw_setscheme(drw, scheme[SchemeNorm]);
+	drw_text(drw, thick, bh/2, w, btm, lrpad/2, m->sel->name, 0);
 
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
@@ -1578,7 +1583,7 @@ setup(void)
 	if (!drw_fontset_create(drw, fonts, LENGTH(fonts)))
 		die("no fonts could be loaded.");
 	lrpad = drw->fonts->h;
-	bh = drw->fonts->h + barhpad;
+	bh = (drw->fonts->h*2) + barhpad;
 	updategeom();
 	/* init atoms */
 	utf8string = XInternAtom(dpy, "UTF8_STRING", False);
@@ -1738,7 +1743,10 @@ tile(Monitor *m)
 void
 togglebar(const Arg *arg)
 {
-	selmon->showbar = !selmon->showbar;
+	if(selmon->toggle) {
+		selmon->showbar = !selmon->showbar;
+	}
+	selmon->toggle=!selmon->toggle;
 	updatebarpos(selmon);
 	XMoveResizeWindow(dpy, selmon->barwin, selmon->wx, selmon->by, selmon->ww, bh);
 	arrange(selmon);
@@ -1888,14 +1896,22 @@ updatebars(void)
 void
 updatebarpos(Monitor *m)
 {
+	int dv = 1;
 	m->wy = m->my;
 	m->wh = m->mh;
-	if (m->showbar) {
-		m->wh -= bh;
+
+	if (m->toggle) dv = 2;
+
+	if (m->showbar || m->toggle) {
+		m->wh -= bh/dv;
 		m->by = m->topbar ? m->wy : m->wy + m->wh;
-		m->wy = m->topbar ? m->wy + bh : m->wy;
-	} else
+		m->wy = m->topbar ? m->wy + (bh/dv) : m->wy;
+
+		if (m->toggle) m->by -= (bh/dv);
+	} else{
 		m->by = -bh;
+	}
+
 }
 
 void
