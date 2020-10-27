@@ -447,8 +447,6 @@ buttonpress(XEvent *e)
 		for (c = m->clients; c; c = c->next)
 			occ |= c->tags == 255 ? 0 : c->tags;
 		do {
-			if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
-				continue;
 			x += TEXTW(tags[i]);
 		}while (ev->x >= x && ++i < LENGTH(tags));
 		if (i < LENGTH(tags) && ev->x > TEXTW(m->ltsymbol)) {
@@ -762,10 +760,6 @@ drawbar(Monitor *m)
 	x += w;
 
 	for (i = 0; i < LENGTH(tags); i++) {
-		/* do not draw vacant tags */
-		if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
-			continue;
-
 		w = TEXTW(tags[i]);
 
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
