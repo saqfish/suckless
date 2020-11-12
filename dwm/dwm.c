@@ -428,7 +428,7 @@ attachstack(Client *c)
 void
 buttonpress(XEvent *e)
 {
-	unsigned int i, x, click, occ = 0;
+	unsigned int i, x, click, btm = 0, occ = 0;
 	Arg arg = {0};
 	Client *c;
 	Monitor *m;
@@ -442,22 +442,27 @@ buttonpress(XEvent *e)
 		focus(NULL);
 	}
 	if (ev->window == selmon->barwin) {
-		i = 0;
-		x = TEXTW(m->ltsymbol);
-		for (c = m->clients; c; c = c->next)
-			occ |= c->tags == 255 ? 0 : c->tags;
-		do {
-			x += TEXTW(tags[i]);
-		}while (ev->x >= x && ++i < LENGTH(tags));
-		if (i < LENGTH(tags) && ev->x > TEXTW(m->ltsymbol)) {
-			click = ClkTagBar;
-			arg.ui = 1 << i;
-		} else if (ev->x < x)
+		i = x = 0;
+
+		if(ev->y > (bh/2)) btm = 1;	
+
+		if (btm)
 			click = ClkLtSymbol;
-		else if (ev->x > selmon->ww - TEXTW(stext))
-			click = ClkStatusText;
-		else
-			click = ClkWinTitle;
+		else{
+			for (c = m->clients; c; c = c->next)
+				occ |= c->tags == 255 ? 0 : c->tags;
+			do {
+				x += TEXTW(tags[i]);
+			}while (ev->x >= x && ++i < LENGTH(tags));
+			if (i < LENGTH(tags)) {
+				click = ClkTagBar;
+				arg.ui = 1 << i;
+			}
+			else if (ev->x > selmon->ww - TEXTW(stext))
+				click = ClkStatusText;
+			else
+				click = ClkWinTitle;
+		}
 	} else if ((c = wintoclient(ev->window))) {
 		focus(c);
 		restack(selmon);
@@ -717,11 +722,15 @@ drawbar(Monitor *m)
 	Client *c;
 	char *tok, *sptr;
        	char stxt[257];
+	char ltlbl[16];
 
 	strcpy(stxt,stext);
 
 	drw_setscheme(drw, scheme[SchemeBar]);
-	drw_rect(drw, 0, 0, m->ww, bh, 1, 0);
+	drw_rect(drw, 0, 0, m->ww, bh/2, 1, 0);
+
+	drw_setscheme(drw, scheme[SchemeSel]);
+	drw_rect(drw, 0, bh/2, m->ww, bh/2, 1 , 1);
 
 	const int sbc[] = {SchemeReg, SchemeRed, SchemeYellow, SchemeGreen};
 
@@ -752,13 +761,6 @@ drawbar(Monitor *m)
 	}
 	x = thick;
 	
-	w = blw = TEXTW(m->ltsymbol);
-
-	drw_setscheme(drw, scheme[SchemeNorm]);
-	drw_text(drw, x, thick, w, btm, lrpad/2, m->ltsymbol, 0);
-
-	x += w;
-
 	for (i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
 
@@ -767,9 +769,36 @@ drawbar(Monitor *m)
 		x += w;
 	}
 
-	w = TEXTW(m->sel->name);
+	w = blw = TEXTW(m->ltsymbol);
+
 	drw_setscheme(drw, scheme[SchemeNorm]);
-	drw_text(drw, thick, bh/2, w, btm, lrpad/2, m->sel->name, 0);
+	drw_text(drw, m->ww-w, bh/2, w, bh/2, lrpad/2, m->ltsymbol, m->sel ? m->sel->isfloating: 0);
+
+	pos = w;
+
+	x = thick;
+	int cnt = 0, self = 0;
+	for (c = m->clients; c; c = c->next)
+		if (ISVISIBLE(c)){
+			cnt++;
+			if (m->sel == c)
+				self = cnt;
+		}
+
+	if(cnt && m->sellt == 1 && cnt > 1){
+		snprintf(ltlbl, sizeof ltlbl, "%d", self);
+		w = TEXTW(ltlbl);
+
+		drw_setscheme(drw, scheme[SchemeNorm]);
+		drw_text(drw, x, bh/2, w, bh/2, lrpad/2, ltlbl, 0);
+
+		x+=w;
+	}
+
+	w = TEXTW(m->sel->name);
+	drw_setscheme(drw, scheme[SchemeSel]);
+	drw_text(drw, x, bh/2, m->ww-pos-TEXTW(ltlbl), bh/2, lrpad/2, m->sel->name, 0);
+
 
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
@@ -1142,7 +1171,7 @@ monocle(Monitor *m)
 		if (ISVISIBLE(c))
 			n++;
 	if (n > 0) /* override layout symbol */
-		snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
+		snprintf(m->ltsymbol, sizeof m->ltsymbol, "%d", n);
 	for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
 		resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0);
 }

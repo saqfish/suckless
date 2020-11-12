@@ -3,9 +3,11 @@
 
 static const unsigned int borderpx  = 4;        /* border pixel of windows */
 static const unsigned int snap      = 16;       /* snap pixel */
+
 static const unsigned int barhpad  = 16;        /* bar height padding */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
+
 static const char *fonts[]          = {"mono:size=12"};
 static const char dmenufont[]       = "mono:size=18";
 static const char termfont[]        = "mono:size=18";
@@ -16,7 +18,6 @@ static const char col_normbd[]      = "#0a1016";
 static const char col_selbg[]       = "#29333c";
 static const char col_selfg[]       = "#FFFFFF";
 static const char col_selbd[]       = "#29333c";
-
 
 static const char stat_bg[]         = "#0a1016";
 static const char stat_bd[]         = "#000000";

@@ -1,45 +1,39 @@
 /* See LICENSE file for copyright and license details. */
 
 
-static const unsigned int borderpx  = 4;        /* border pixel of windows */
+static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 16;       /* snap pixel */
+
 static const unsigned int barhpad  = 16;        /* bar height padding */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = {"mono:size=12"};
-static const char dmenufont[]       = "mono:size=18";
-static const char editorfont[]      = "mono:size=18";
-static const char termfont[]        = "mono:size=18";
 
-static const char col_normbg[]      = "#0a1016";
-static const char col_normfg[]      = "#FFFFFF";
-static const char col_normbd[]      = "#0a1016";
-static const char col_selbg[]       = "#29333c";
-static const char col_selfg[]       = "#FFFFFF";
-static const char col_selbd[]       = "#29333c";
+/* fonts */
+static const char *fonts[]          = {"DejaVu Sans Mono:style=Book:size=12"};
+static const char dmenufont[]       = "DejaVu Sans Mono:style=Book:size=20";
+static const char editorfont[]      = "DejaVu Sans Mono:style=Book:size=14";
+static const char termfont[]        = "DejaVu Sans Mono:style=Book:size=14";
 
+/* color scheme */
+const char bg[]      = "#0a1016"; /* background color */
+const char fg[]      = "#FFFFFF"; /* foreground color */
+const char sel[]     = "#29333c"; /* selection color */
+const char bd[]      = "#29333c"; /* selection color */
 
-static const char stat_bg[]         = "#0a1016";
-static const char stat_bd[]         = "#000000";
-
-static const char stat_fg0[]       = "#FFFFFF";
-static const char stat_fg1[]       = "#ff0000";
-static const char stat_fg2[]       = "#FFFF00";
-static const char stat_fg3[]       = "#00ff00";
-
-static const char bar_bg[]         = "#0a1016";
-static const char bar_fg[]         = "#000000";
-static const char bar_bd[]         = "#000000";
+/* status bar colors */
+static const char red[]       = "#ff0000";
+static const char yellow[]    = "#FFFF00";
+static const char green[]     = "#00ff00";
 
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
-	[SchemeBar] = { bar_fg, bar_bg, bar_bd},
-	[SchemeNorm] = { col_normfg, col_normbg, col_normbd},
-	[SchemeSel] = { col_selfg, col_selbg, col_selbd},
-	[SchemeReg] = { stat_fg0, stat_bg, stat_bd},
-	[SchemeRed] = { stat_fg1, stat_bg, stat_bd},
-	[SchemeYellow] = { stat_fg2, stat_bg, stat_bd},
-	[SchemeGreen] = { stat_fg3, stat_bg, stat_bd},
+	[SchemeBar] = { bg, fg, bd},
+	[SchemeNorm] = { fg, bg, bd},
+	[SchemeSel] = { fg, sel, sel},
+	[SchemeReg] = { fg, bg, bd},
+	[SchemeRed] = { red, bg, bd},
+	[SchemeYellow] = { yellow, bg, bd},
+	[SchemeGreen] = { green, bg, bd},
 };
 
 
@@ -48,7 +42,7 @@ typedef struct {
 	const char *name;
 	const void *cmd;
 } Sp;
-static const char *stermcmd[]  = { "st", "-n", "sterm", "-f", termfont, NULL };
+static const char *stermcmd[]  = { "st", "-T", "Terminal", "-n", "sterm", "-f", termfont, NULL };
 static const char *sbrwsr[]  = { "qutebrowser", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
@@ -94,8 +88,8 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_normbg, "-nf", col_normfg, "-sb", col_selbg, "-sf", col_selfg, NULL };
-static const char *termcmd[]  = { "st", "-f", termfont, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", bg, "-nf", fg, "-sb", sel, "-sf", green, NULL };
+static const char *termcmd[]  = { "st", "-T", "Terminal", "-f", termfont, NULL };
 static const char *editorcmd[]  = { "st", "-f", editorfont, "-e", "vim", NULL };
 
 
@@ -116,7 +110,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
