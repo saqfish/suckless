@@ -37,11 +37,11 @@ static const char *colors[][3]      = {
 };
 
 
-
 typedef struct {
 	const char *name;
 	const void *cmd;
 } Sp;
+
 static const char *stermcmd[]  = { "st", "-T", "Terminal", "-n", "sterm", "-f", termfont, NULL };
 static const char *sbrwsr[]  = { "qutebrowser", NULL };
 static Sp scratchpads[] = {
@@ -70,8 +70,8 @@ static const int resizehints = 0;    /* 1 means respect size hints in tiled resi
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "T",      tile },    /* first entry is default */
 	{ "M",      monocle },
+	{ "T",      tile },    /* first entry is default */
 	{ "X",      NULL },    /* no layout function means floating behavior */
 };
 
@@ -146,5 +146,7 @@ static Button buttons[] = {
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
 	{ ClkTagBar,            0,         	Button1,        view,  		{0} },
+	{ ClkClientWin,         MODKEY,         Button4,        focusstack,     {.i = +1 } },
+	{ ClkClientWin,         MODKEY,         Button5,        focusstack,     {.i = -1 } },
 };
 
