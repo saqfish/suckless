@@ -764,7 +764,7 @@ drawbar(Monitor *m)
 
 
 			drw_setscheme(drw, scheme[sbc[clr]]);
-			drw_text(drw, m->ww - pos, thick, tw, btm, ispace/2, bad ? invalid : txt, inv);
+			drw_text(drw, m->ww - pos, selmon->toggle ? bh/2: thick, tw, btm, ispace/2, bad ? invalid : txt, inv);
 
 			tok = strtok_r(NULL, ",", &sptr);
 
@@ -794,8 +794,6 @@ drawbar(Monitor *m)
 
 	x+= TEXTW(m->ltsymbol);
 
-	pos = w;
-
 	int cnt = 0, self = 0;
 	for (c = m->clients; c; c = c->next)
 		if (ISVISIBLE(c)){
@@ -815,7 +813,7 @@ drawbar(Monitor *m)
 	}
 
 	drw_setscheme(drw, scheme[SchemeSel]);
-	drw_text(drw, x, bh/2, m->ww, bh/2, lrpad/2, m->sel->name, 0);
+	drw_text(drw, x, bh/2, selmon->toggle ? m->ww-pos-x: m->ww, bh/2, lrpad/2, m->sel->name, 0);
 
 
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
