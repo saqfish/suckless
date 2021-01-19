@@ -734,20 +734,37 @@ drawbar(Monitor *m)
 
 	const int sbc[] = {SchemeReg, SchemeRed, SchemeYellow, SchemeGreen};
 
-	/* draw status first so it can be overdrawn by tags later */
-	if (m == selmon) { /* status is only drawn on selected monitor */
+	if (m == selmon) { 
 		tok = strtok_r(stxt, ",", &sptr);
 		while(tok != NULL){
-			int clr = 0, tw = 0;
-			char *txt = tok+1;
-
-			tw = TEXTW(txt)-ispace;
-			pos += tw + thick;
+			int clr,inv,tw, bad = 0;
+			char *txt = tok+2;
+			char *invalid = "Invalid";
 			
 			clr = tok[0] - '0';
 
+			if( clr < 0 && clr > 3){
+				clr = 1;
+				inv = 1;
+				bad = 1;
+				tw = TEXTW(invalid)-ispace;
+			}else{
+				inv = tok[1] - '0';
+				if(inv != 0 && inv != 1){
+					clr = 1;
+					inv = 1;
+					bad = 1;
+					tw = TEXTW(invalid)-ispace;
+				}else{
+					tw = TEXTW(txt)-ispace;
+				}
+			}
+
+			pos += tw + thick;
+
+
 			drw_setscheme(drw, scheme[sbc[clr]]);
-			drw_text(drw, m->ww - pos, thick, tw, btm, thick*2, txt, 0);
+			drw_text(drw, m->ww - pos, thick, tw, btm, ispace/2, bad ? invalid : txt, inv);
 
 			tok = strtok_r(NULL, ",", &sptr);
 
@@ -769,14 +786,16 @@ drawbar(Monitor *m)
 		x += w;
 	}
 
-	w = blw = TEXTW(m->ltsymbol);
+
+	x = thick;
 
 	drw_setscheme(drw, scheme[SchemeNorm]);
-	drw_text(drw, m->ww-w, bh/2, w, bh/2, lrpad/2, m->ltsymbol, m->sel ? m->sel->isfloating: 0);
+	drw_text(drw, x, bh/2, w, bh/2, lrpad/2, m->ltsymbol, 0);
+
+	x+= TEXTW(m->ltsymbol);
 
 	pos = w;
 
-	x = thick;
 	int cnt = 0, self = 0;
 	for (c = m->clients; c; c = c->next)
 		if (ISVISIBLE(c)){
@@ -785,19 +804,18 @@ drawbar(Monitor *m)
 				self = cnt;
 		}
 
-	if(cnt && m->sellt == 1 && cnt > 1){
+
+	if(cnt){
 		snprintf(ltlbl, sizeof ltlbl, "%d", self);
-		w = TEXTW(ltlbl);
 
-		drw_setscheme(drw, scheme[SchemeNorm]);
-		drw_text(drw, x, bh/2, w, bh/2, lrpad/2, ltlbl, 0);
+		drw_setscheme(drw, scheme[SchemeSel]);
+		drw_text(drw, x, bh/2, w, bh/2, lrpad/2, ltlbl, m->sel ? m->sel->isfloating: 0);
 
-		x+=w;
+		x+= TEXTW(ltlbl);
 	}
 
-	w = TEXTW(m->sel->name);
 	drw_setscheme(drw, scheme[SchemeSel]);
-	drw_text(drw, x, bh/2, m->ww-pos-TEXTW(ltlbl), bh/2, lrpad/2, m->sel->name, 0);
+	drw_text(drw, x, bh/2, m->ww, bh/2, lrpad/2, m->sel->name, 0);
 
 
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
@@ -2092,7 +2110,7 @@ void
 updatestatus(void)
 {
 	if (!gettextprop(root, XA_WM_NAME, stext, sizeof(stext)))
-		strcpy(stext, "dwm-"VERSION);
+		strcpy(stext, "1dwm-"VERSION);
 	drawbar(selmon);
 }
 
