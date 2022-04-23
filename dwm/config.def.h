@@ -30,6 +30,7 @@ static const char *const autostart[] = {
 	"st", "-f", termfont, "-t", "Session", NULL,
 	"sbar", NULL,
 	"volumeicon", NULL,
+	"xsetroot", "-solid", "#22272c", NULL,
 	NULL /* terminate */
 };
 
