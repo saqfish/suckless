@@ -1,0 +1,51 @@
+#!/bin/env sh
+
+# INIT
+printf "$$" > ~/.cache/pidofbar
+sec=0
+
+# MODULES
+. ~/.sbar/battery
+
+update_cpu () { 
+	cpu="$(grep -o "^[^ ]*" /proc/loadavg )" 
+}
+
+update_memory () { 
+	memory="$(free -h | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")"
+}
+
+update_time () { 
+	time="$(date "+[%a %d %b] [%I:%M %P]")" 
+}
+
+display () { 
+	#printf "%s\n" " $event $memory - $cpu $bat $time "
+	xsetroot -name " $memory - $cpu $bat $time "
+}
+
+# SIGNALLING
+# trap	"<function>;display"		"RTMIN+n"
+trap	"update_bat;display" 		"RTMIN+1"
+# to update it from external commands
+## kill -m "$(cat ~/.cache/pidofbar)"
+# where m = 34 + n
+
+while true
+do
+	sleep 1 & wait && { 
+		# to update item ever n seconds with a offset of m
+		## [ $((sec % n)) -eq m ] && udpate_item
+		[ $((sec % 5 )) -eq 0 ] && update_time 	# update time every 5 seconds
+		[ $((sec % 15)) -eq 0 ] && update_cpu 	# update cpu every 15 seconds
+		[ $((sec % 15)) -eq 0 ] && update_memory
+		[ $((sec % 10)) -eq 0 ] && update_bat
+		#[ $((sec % 300)) -eq 1 ] && update_event
+
+		# how often the display updates ( 5 seconds )
+		[ $((sec % 5 )) -eq 0 ] && display
+		sec=$((sec + 1))
+	}
+done 
+
+

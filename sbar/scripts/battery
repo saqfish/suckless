@@ -1,0 +1,35 @@
+#!/bin/env sh
+
+update_bat () { 
+	#Customizable variables
+	BATBG="#000000"
+	HIGHCLR="#AAFF00"
+	MEDCLR="#FFA500"
+	LOWCLR="#FF0000"
+	MEDTHRESH=50
+	LOWTHRESH=20
+
+	BAT=$(cat /sys/class/power_supply/BAT0/capacity)
+
+	#Battery nose
+	NOSEW=4
+	NOSEX=$(expr $NOSEW / 2)
+	NOSE="r0,7,$NOSEX,$NOSEW"
+
+	#Battery body
+	FULL=22
+	BATBODY="r$NOSEX,$NOSEW,$FULL,10"
+	BATFILL="c$BATBG^^r3,5,20,8"
+
+	#Capacity
+	CAP=$(echo "$BAT / 100 * $FULL" | bc -l | cut -d . -f 1)
+	CAPPAD=$(echo "$NOSEX + $FULL - $CAP - 1" | bc)
+	CAPCLR=$HIGHCLR
+	if [ $BAT -lt $MEDTHRESH ]; then CAPCLR=$MEDCLR; fi
+	if [ $BAT -lt $LOWTHRESH ]; then CAPCLR=$LOWCLR; fi
+	CAPFILL="c$CAPCLR^^r$CAPPAD,5,$CAP,8"
+
+	RESET="^d^^f24"
+
+	bat="^$NOSE^^$BATBODY^^$BATFILL^^$CAPFILL^$RESET^"
+}
