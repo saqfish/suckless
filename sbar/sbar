@@ -16,7 +16,7 @@ update_memory () {
 }
 
 update_time () { 
-	time="$(date "+[%a %d %b] [%I:%M %P]")" 
+	time="$(date "+%a %D %I:%M %P")" 
 }
 
 display () { 
