@@ -1,0 +1,6 @@
+#!/bin/env sh
+
+update_memory () { 
+	val="$(free -h | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")"
+	memory="^b#1C6000^ $val ^d^"
+}

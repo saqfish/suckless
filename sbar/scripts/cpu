@@ -1,0 +1,15 @@
+#!/bin/env sh
+
+update_cpu () { 
+	CORES=8
+	MIDTHRES=$(echo "$CORES - $CORES / 2" | bc);
+	HIGHTHRES=$(echo "$CORES - $CORES / 3" | bc);
+	COLOR="#006700"
+
+	vala="$(grep -o '^[^ ]*' /proc/loadavg )"
+	val=$(echo "$vala / 1" | bc)
+	if [ $val -gt $MIDTHRES ]; then COLOR="#8d6b21"; fi
+	if [ $val -gt $HIGHTHRES ]; then COLOR="#670000"; fi
+
+	cpu="^b$COLOR^ $val ^d^"
+}

@@ -3,9 +3,9 @@
 update_bat () { 
 	#Customizable variables
 	BATBG="#000000"
-	HIGHCLR="#AAFF00"
-	MEDCLR="#FFA500"
-	LOWCLR="#FF0000"
+	HIGHCLR="#006700"
+	MEDCLR="#8d6b21"
+	LOWCLR="#670000"
 	MEDTHRESH=50
 	LOWTHRESH=20
 
@@ -22,7 +22,7 @@ update_bat () {
 	BATFILL="c$BATBG^^r3,5,20,8"
 
 	#Capacity
-	CAP=$(echo "$BAT / 100 * $FULL" | bc -l | cut -d . -f 1)
+	CAP=$(echo "$BAT / 100 * $FULL - 1" | bc -l | cut -d . -f 1)
 	CAPPAD=$(echo "$NOSEX + $FULL - $CAP - 1" | bc)
 	CAPCLR=$HIGHCLR
 	if [ $BAT -lt $MEDTHRESH ]; then CAPCLR=$MEDCLR; fi

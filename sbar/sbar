@@ -5,15 +5,9 @@ printf "$$" > ~/.cache/pidofbar
 sec=0
 
 # MODULES
+. ~/.sbar/cpu
+. ~/.sbar/memory
 . ~/.sbar/battery
-
-update_cpu () { 
-	cpu="$(grep -o "^[^ ]*" /proc/loadavg )" 
-}
-
-update_memory () { 
-	memory="$(free -h | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")"
-}
 
 update_time () { 
 	time="$(date "+%a %D %I:%M %P")" 
@@ -21,7 +15,7 @@ update_time () {
 
 display () { 
 	#printf "%s\n" " $event $memory - $cpu $bat $time "
-	xsetroot -name " $memory - $cpu $bat $time "
+	xsetroot -name " $memory $cpu $bat $time "
 }
 
 # SIGNALLING
