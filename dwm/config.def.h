@@ -31,7 +31,7 @@ static const char *const autostart[] = {
 	"sbar", NULL,
 	"volumeicon", NULL,
 	"setxkbmap", "-option", "grp:alt_shift_toggle", "-layout", "us,ar", NULL,
-	"xsetroot", "-solid", "#22272c", NULL,
+	"feh", "--bg-scale", ".wallpapers/1.jpg", NULL,
 	"picom", "-b", NULL,
 	NULL /* terminate */
 };
