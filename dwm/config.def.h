@@ -14,15 +14,15 @@ static const int topbar             = 1;     /* 0 means bottom bar */
 static const char *fonts[]          = { "monospace:size=10" };
 static const char dmenufont[]       = "monospace:size=20";
 static const char termfont[]        = "monospace:size=14";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#005577";
+static const char col_text[]        = "#eceff4";
+static const char col_textl[]       = "#4c566a";
+static const char col_blk[]         = "#000000";
+static const char col_fg[]          = "#232831";
+static const char col_bg[]          = "#191c22";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+	[SchemeNorm] = { col_text, col_bg, col_bg },
+	[SchemeSel]  = { col_text, col_fg,  col_fg  },
 };
 
 /* autostart programs */
@@ -41,7 +41,7 @@ static const char *const autostart[] = {
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8"};
 
 /* grid of tags */
-#define DRAWCLASSICTAGS             1 << 0
+#define DRAWCLASSICTAGS             0 << 0
 #define DRAWTAGGRID                 1 << 1
 
 #define SWITCHTAG_UP                1 << 0
@@ -94,7 +94,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_bg, "-nf", col_textl, "-sb", col_fg, "-sf", col_text, NULL };
 static const char *termcmd[]  = { "st", "-f", termfont, "-t", "Terminal", NULL };
 
 static Key keys[] = {
@@ -151,6 +151,8 @@ static Key keys[] = {
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
 	/* click                event mask      button          function        argument */
+	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
+        { ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
