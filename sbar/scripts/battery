@@ -1,15 +1,23 @@
 #!/bin/env sh
 
 update_bat () { 
+	STATUS=$(cat /sys/class/power_supply/BAT0/status)
+	BAT=$(cat /sys/class/power_supply/BAT0/capacity)
+
 	#Customizable variables
 	BATBG="#000000"
+	BATFG="#FFFFFF"
 	HIGHCLR="#006700"
 	MEDCLR="#8d6b21"
 	LOWCLR="#670000"
 	MEDTHRESH=50
 	LOWTHRESH=20
 
-	BAT=$(cat /sys/class/power_supply/BAT0/capacity)
+	if [ $STATUS != "Discharging" ]; then 
+		LOWCLR="#FFFFFF"
+		MEDCLR="#FFFFFF"
+		HIGHCLR="#FFFFFF"
+	fi
 
 	#Battery nose
 	NOSEW=4
@@ -18,16 +26,17 @@ update_bat () {
 
 	#Battery body
 	FULL=22
-	BATBODY="r$NOSEX,$NOSEW,$FULL,10"
+	BATBODY="c$BATFG^^r$NOSEX,$NOSEW,$FULL,10"
 	BATFILL="c$BATBG^^r3,5,20,8"
 
 	#Capacity
-	CAP=$(echo "$BAT / 100 * $FULL - 1" | bc -l | cut -d . -f 1)
+	CAP=$(echo "$BAT / 100 * $FULL - 2" | bc -l | cut -d . -f 1)
 	CAPPAD=$(echo "$NOSEX + $FULL - $CAP - 1" | bc)
 	CAPCLR=$HIGHCLR
 	if [ $BAT -lt $MEDTHRESH ]; then CAPCLR=$MEDCLR; fi
 	if [ $BAT -lt $LOWTHRESH ]; then CAPCLR=$LOWCLR; fi
 	CAPFILL="c$CAPCLR^^r$CAPPAD,5,$CAP,8"
+
 
 	RESET="^d^^f24"
 
