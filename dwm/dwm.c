@@ -72,7 +72,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeTag }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetSystemTray, NetSystemTrayOP, NetSystemTrayOrientation, NetSystemTrayOrientationHorz,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
@@ -1012,6 +1012,7 @@ void drawtaggrid(Monitor *m, int *x_pos, unsigned int occ)
 {
     unsigned int x, y, h, max_x, columns;
     int invert, i,j, k;
+    unsigned int c;
 
     h = bh / tagrows;
     x = max_x = *x_pos;
@@ -1030,18 +1031,14 @@ void drawtaggrid(Monitor *m, int *x_pos, unsigned int occ)
 		    invert = m->tagset[m->seltags] & 1 << i ? 0 : 1;
 
             /* Select active color for current square */
-            XSetForeground(drw->dpy, drw->gc, !invert ? scheme[SchemeSel][ColBg].pixel :
-                                scheme[SchemeNorm][ColFg].pixel);
+	    c = scheme[SchemeTag][0].pixel;
+	    if (occ & 1 << i) 
+		    c = scheme[SchemeTag][1].pixel;
+            XSetForeground(drw->dpy, drw->gc, !invert ? scheme[SchemeTag][2].pixel : c);
+
             XFillRectangle(dpy, drw->drawable, drw->gc, x+1, y+1, h-1, h-1);
 
-            /* Mark square if tag has client */
-            if (occ & 1 << i) {
-                XSetForeground(drw->dpy, drw->gc, !invert ? scheme[SchemeSel][ColFg].pixel :
-                                scheme[SchemeNorm][ColBg].pixel);
-                XFillRectangle(dpy, drw->drawable, drw->gc, x + 1, y + 1,
-                               h / 2, h / 2);
-            }
-		    x += h;
+	    x += h;
             if (x > max_x) {
                 max_x = x;
             }
