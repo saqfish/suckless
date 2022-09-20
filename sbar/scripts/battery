@@ -2,44 +2,15 @@
 
 update_bat () { 
 	STATUS=$(cat /sys/class/power_supply/BAT0/status)
-	BAT=$(cat /sys/class/power_supply/BAT0/capacity)
+	#val=$(cat /sys/class/power_supply/BAT0/capacity)
+	val=65
 
-	##Customizable variables
-	#BATBG="#000000"
-	#BATFG="#FFFFFF"
-	#HIGHCLR="#006700"
-	#MEDCLR="#8d6b21"
-	#LOWCLR="#670000"
-	#MEDTHRESH=50
-	#LOWTHRESH=20
+	LOWTHRES=20
+	MIDTHRES=60
+	COLOR="#006700"
 
-	##if [ $STATUS != "Discharging" ]; then 
-	##	LOWCLR="#FFFFFF"
-	##	MEDCLR="#FFFFFF"
-	##	HIGHCLR="#FFFFFF"
-	##fi
+	if [ $val -lt $MIDTHRES ]; then COLOR="#8d6b21"; fi
+	if [ $val -lt $LOWTHRES ]; then COLOR="#670000"; fi
 
-	##Battery nose
-	#NOSEW=4
-	#NOSEX=$(expr $NOSEW / 2)
-	#NOSE="r0,7,$NOSEX,$NOSEW"
-
-	##Battery body
-	#FULL=22
-	#BATBODY="c$BATFG^^r$NOSEX,$NOSEW,$FULL,10"
-	#BATFILL="c$BATBG^^r3,5,20,8"
-
-	##Capacity
-	#CAP=$(echo "$BAT / 100 * $FULL - 2" | bc -l | cut -d . -f 1)
-	#CAPPAD=$(echo "$NOSEX + $FULL - $CAP - 1" | bc)
-	#CAPCLR=$HIGHCLR
-	#if [ $BAT -lt $MEDTHRESH ]; then CAPCLR=$MEDCLR; fi
-	#if [ $BAT -lt $LOWTHRESH ]; then CAPCLR=$LOWCLR; fi
-	#CAPFILL="c$CAPCLR^^r$CAPPAD,5,$CAP,8"
-
-
-	#RESET="^d^^f24"
-
-	#bat="^$NOSE^^$BATBODY^^$BATFILL^^$CAPFILL^$RESET^"
-	bat="$BAT%"
+	bat="^b$COLOR^ $val% ^d^"
 }
