@@ -2,8 +2,7 @@
 
 update_bat () { 
 	STATUS=$(cat /sys/class/power_supply/BAT0/status)
-	#val=$(cat /sys/class/power_supply/BAT0/capacity)
-	val=65
+	val=$(cat /sys/class/power_supply/BAT0/capacity)
 
 	LOWTHRES=20
 	MIDTHRES=60
