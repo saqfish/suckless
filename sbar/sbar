@@ -18,9 +18,14 @@ display () {
 	xsetroot -name "$memory $cpu $bat $time "
 }
 
+random_wallpaper () {
+	feh --bg-scale $(find $HOME/.wallpapers/ -type f| sort -R | head -1)
+}
+
 # SIGNALLING
 # trap	"<function>;display"		"RTMIN+n"
 trap	"update_bat;display" 		"RTMIN+1"
+trap	"random_wallpaper" 		"RTMIN+2"
 # to update it from external commands
 ## kill -m "$(cat ~/.cache/pidofbar)"
 # where m = 34 + n
