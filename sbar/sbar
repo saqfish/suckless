@@ -8,6 +8,7 @@ sec=0
 . ~/.sbar/cpu
 . ~/.sbar/memory
 . ~/.sbar/battery
+. ~/.sbar/select_wallpaper
 
 update_time () { 
 	time="$(date "+%a %D %I:%M %P")" 
@@ -25,7 +26,7 @@ random_wallpaper () {
 # SIGNALLING
 # trap	"<function>;display"		"RTMIN+n"
 trap	"update_bat;display" 		"RTMIN+1"
-trap	"random_wallpaper" 		"RTMIN+2"
+trap	"select_wallpaper" 		"RTMIN+2"
 # to update it from external commands
 ## kill -m "$(cat ~/.cache/pidofbar)"
 # where m = 34 + n

@@ -1,0 +1,13 @@
+#!/bin/env sh
+
+select_wallpaper () {
+	random="$(echo -n "random")\n"
+	list="$(find ~/.wallpapers -type f)"
+	sel=$(echo "$random$list" | dmenu -i -l 20)
+
+	if test "$sel" = "random"; then
+	  sel="$(find ~/.wallpapers -type f | sort -R| head -1)"
+	fi
+	  
+	feh --bg-scale $sel
+}
