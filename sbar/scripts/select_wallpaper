@@ -9,5 +9,5 @@ select_wallpaper () {
 	  sel="$(find ~/.wallpapers -type f | sort -R| head -1)"
 	fi
 	  
-	feh --bg-scale $sel
+	xwallpaper --center $sel
 }
