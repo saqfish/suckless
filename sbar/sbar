@@ -8,7 +8,10 @@ sec=0
 . ~/.sbar/cpu
 . ~/.sbar/memory
 . ~/.sbar/battery
+. ~/.sbar/startup
 . ~/.sbar/select_wallpaper
+
+startup
 
 update_time () { 
 	time="$(date "+%a %D %I:%M %P")" 
@@ -30,6 +33,7 @@ trap	"select_wallpaper" 		"RTMIN+2"
 # to update it from external commands
 ## kill -m "$(cat ~/.cache/pidofbar)"
 # where m = 34 + n
+
 
 while true
 do
